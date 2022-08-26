@@ -520,7 +520,7 @@ static void print_descriptors_verbose(char *desc_str, __u8 *desc_buf,
 	}
 }
 
-static void print_descriptors(char *desc_str, __u8 *desc_buf,
+void print_descriptors(char *desc_str, __u8 *desc_buf,
 			      struct desc_field_offset *desc_array,
 			      int arr_size)
 {

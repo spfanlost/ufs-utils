@@ -75,7 +75,7 @@ static void help(char *np)
 		" --help|-h\n\t\tShow detailed help for a command\n");
 }
 
-static void initialized_options(struct tool_options *options)
+void initialized_options(struct tool_options *options)
 {
 	memset(options, INVALID, sizeof(*options));
 	options->path[0] = '\0';
@@ -84,7 +84,7 @@ static void initialized_options(struct tool_options *options)
 	options->sg_type = SG4_TYPE;
 }
 
-static int parse_args(int argc, char **argv, command_function *func,
+int parse_args(int argc, char **argv, command_function *func,
 		      struct tool_options *options)
 {
 	int rc = OK;
@@ -260,7 +260,7 @@ long str_to_long(char *nptr, int base, long *result)
 
 	return OK;
 }
-
+#if 0
 int main(int ac, char **av)
 {
 	int rc;
@@ -281,4 +281,5 @@ out:
 		free(options.data);
 	return rc ? EXIT_FAILURE : EXIT_SUCCESS;
 }
+#endif
 

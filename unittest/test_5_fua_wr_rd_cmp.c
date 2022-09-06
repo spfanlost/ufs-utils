@@ -1,12 +1,12 @@
 /**
  * @file .c
  * @author yumeng (imyumeng@qq.com)
- * @brief 
+ * @brief
  * @version 0.1
  * @date 2019-10-08
- * 
+ *
  * @copyright Copyright (c) 2019
- * 
+ *
  */
 #include <stdio.h>
 #include <stdint.h>

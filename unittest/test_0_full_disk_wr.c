@@ -1,12 +1,12 @@
 /**
  * @file test_0_full_disk_wr.c
  * @author yumeng (imyumeng@qq.com)
- * @brief 
+ * @brief
  * @version 0.1
  * @date 2019-10-08
- * 
+ *
  * @copyright Copyright (c) 2019
- * 
+ *
  */
 #include <stdio.h>
 #include <stdint.h>
@@ -98,7 +98,7 @@ static dword_t sub_case_read_random(void)
 static dword_t sub_case_write_read_verify(void)
 {
     int test_flag = SUCCEED;
-    #if 0
+#if 0
     static dword_t patcnt;
     // memset(write_buffer, BYTE_RAND(), wr_nlb * LBA_DATA_SIZE(wr_nsid));
     // memset(read_buffer, 0, wr_nlb * LBA_DATA_SIZE(wr_nsid));
@@ -191,6 +191,6 @@ static dword_t sub_case_write_read_verify(void)
         }
     }
     LOG_INFO("  cq:%d wr/rd check ok! cnt:%d\n", io_cq_id, cmd_cnt);
-    #endif
+#endif
     return test_flag;
 }

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 
-lsscsi
+lsscsi -g
 
 # if [ -n "$lsscsi" ] ; then
 #    echo "Find device!"

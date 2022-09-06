@@ -391,7 +391,7 @@ static void display(int id, const char *name, int local, int peer)
 	       id, name, local, peer);
 }
 
-static int unipro_read(int fd, int idn, int id, __u8 all)
+int unipro_read(int fd, int idn, int id, __u8 all)
 {
 	int index, qts;
 	int mib_val_local, mib_val_peer;
@@ -470,7 +470,7 @@ static int unipro_read(int fd, int idn, int id, __u8 all)
 	return ret;
 }
 
-static int unipro_write(int fd, int idn, int id, int mib_val,
+int unipro_write(int fd, int idn, int id, int mib_val,
 			int attr_set, int target)
 {
 	int index;

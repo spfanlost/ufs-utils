@@ -3,7 +3,7 @@ CC=gcc
 AM_CFLAGS = -D_FILE_OFFSET_BITS=64 -D_FORTIFY_SOURCE=2
 CFLAGS=-g -W -Wall -O2 -static
 
-CXXFLAGS = -DDEBUG
+#CXXFLAGS = -DDEBUG
 CHECKFLAGS = -Wall  -Wundef -Wno-missing-braces
 override CFLAGS := $(CHECKFLAGS) $(CXXFLAGS)
 
@@ -28,6 +28,7 @@ OBJECTS = \
 	unittest.o \
 	test_send_cmd.o \
 	test_send_scsi.o \
+	test_send_uic.o \
 	test_0_full_disk_wr.o \
 	test_5_fua_wr_rd_cmp.o
 
@@ -41,6 +42,7 @@ clean:
 	rm -f ../*.o*
 	rm -f *.o
 	rm -f *.bin
+	rm -f *.dat
 	rm -f $(APP_NAME)
 
 .PHONY: all clean doc

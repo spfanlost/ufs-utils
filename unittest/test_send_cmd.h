@@ -1,12 +1,12 @@
 /**
  * @file test_send_cmd.h
  * @author yumeng (imyumeng@qq.com)
- * @brief 
+ * @brief
  * @version 0.1
  * @date 2019-10-08
- * 
+ *
  * @copyright Copyright (c) 2019
- * 
+ *
  */
 #ifndef _TEST_SEND_CMD_H_
 #define _TEST_SEND_CMD_H_
@@ -15,34 +15,34 @@
 #include "../options.h"
 #include "../scsi_bsg_util.h"
 
-#define CFG_UNIT_DESC_NUM   (0x08)
+#define CFG_UNIT_DESC_NUM (0x08)
 
 typedef enum
 {
 	/* UPIU Query request vendor function */
-	UPIU_QUERY_VENDOR_FUNC_0	= 0xC0,
-	UPIU_QUERY_VENDOR_FUNC_1	= 0xC1,
-	UPIU_QUERY_VENDOR_FUNC_MAX	= 0xFF,
+	UPIU_QUERY_VENDOR_FUNC_0 = 0xC0,
+	UPIU_QUERY_VENDOR_FUNC_1 = 0xC1,
+	UPIU_QUERY_VENDOR_FUNC_MAX = 0xFF,
 } QUERY_VENDOR_FUNCTION;
 
 typedef enum
 {
-	QUERY_VENDOR_OPCODE_0	= 0xF0,
-	QUERY_VENDOR_OPCODE_1	= 0xF1,
-	QUERY_VENDOR_OPCODE_MAX	= 0xFF,
+	QUERY_VENDOR_OPCODE_0 = 0xF0,
+	QUERY_VENDOR_OPCODE_1 = 0xF1,
+	QUERY_VENDOR_OPCODE_MAX = 0xFF,
 } QUERY_VENDOR_OPCODE;
 
 typedef enum
 {
-	ABORT_TASK_FUNC 	= 0x01,
-	ABORT_TASK_SET_FUNC = 0x02,	
+	ABORT_TASK_FUNC = 0x01,
+	ABORT_TASK_SET_FUNC = 0x02,
 	CLEAR_TASK_SET_FUNC = 0x04,
-	LU_RESET_FUNC		= 0x08,
-	QUERY_TASK_FUCNC	= 0x80,
+	LU_RESET_FUNC = 0x08,
+	QUERY_TASK_FUCNC = 0x80,
 	QUERY_TASK_SET_FUNC = 0x81,
 } TASK_FUNC;
 
-#pragma pack (push, 1)
+#pragma pack(push, 1)
 typedef struct
 {
 	byte_t bLength;
@@ -107,7 +107,7 @@ typedef struct
 	byte_t bLogicalBlockSize;
 	byte_t bProvisioningType;
 	word_t wContextCapabilities;
-    byte_t reserved[3];
+	byte_t reserved[3];
 	word_t wLUMaxActiveHPBRegions;
 	word_t wHPBPinnedRegionStartIdx;
 	word_t wNumHPBPinnedRegions;
@@ -134,15 +134,15 @@ typedef struct
 	byte_t bWriteBoosterBufferPreserveUserSpaceEn;
 	byte_t bWriteBoosterBufferType;
 	dword_t dNumSharedWriteBoosterBufferAllocUnits;
-    UFS_UNIT_CONFIG_DESC UnitConfig[CFG_UNIT_DESC_NUM];
+	UFS_UNIT_CONFIG_DESC UnitConfig[CFG_UNIT_DESC_NUM];
 } UFS_CONFIG_DESC;
-#pragma pack (pop) 
+#pragma pack(pop)
 
-
-struct utp_upiu_task {
+struct utp_upiu_task
+{
 	__be32 input_param1;
 	__be32 input_param2;
-	__be32 input_param3;	
+	__be32 input_param3;
 	__be32 reserved[2];
 };
 
@@ -152,26 +152,30 @@ struct utp_upiu_task {
  * @sc: fields structure for scsi command DW-3 to DW-7
  * @qr: fields structure for query request DW-3 to DW-7
  */
-struct utp_upiu_req_ext {
+struct utp_upiu_req_ext
+{
 	struct utp_upiu_header header;
-	union {
-		struct utp_upiu_cmd		sc;
-		struct utp_upiu_query		qr;
-		struct utp_upiu_query		tr;
+	union
+	{
+		struct utp_upiu_cmd sc;
+		struct utp_upiu_query qr;
+		struct utp_upiu_query tr;
 		/* use utp_upiu_query to host the 4 dwords of uic command */
-		struct utp_upiu_query		uc;
-		struct utp_upiu_task		tm;
+		struct utp_upiu_query uc;
+		struct utp_upiu_task tm;
 	};
 };
 
 /* request (CDB) structure of the sg_io_v4 */
-struct ufs_bsg_request_ext {
+struct ufs_bsg_request_ext
+{
 	__u32 msgcode;
 	struct utp_upiu_req_ext upiu_req;
 };
 
 /* response (request sense data) structure of the sg_io_v4 */
-struct ufs_bsg_reply_ext {
+struct ufs_bsg_reply_ext
+{
 	/*
 	 * The completion result. Result exists in two forms:
 	 * if negative, it is an -Exxx system errno value. There will
@@ -188,9 +192,7 @@ struct ufs_bsg_reply_ext {
 	struct utp_upiu_req_ext upiu_rsp;
 };
 
-
 extern UFS_DEVICE_DESC device_desc;
-
 
 int do_vendor_query(QUERY_VENDOR_FUNCTION vendor_func, QUERY_VENDOR_OPCODE vendor_opcode);
 int read_device_desc_ext(UFS_DEVICE_DESC *desc_buff);
@@ -202,7 +204,10 @@ void write_one_config_desc(byte_t idx, byte_t *data_buf);
 void read_all_config_descs(struct tool_options *opt);
 void modify_config_descs(byte_t num);
 void modify_config_descs_ext(void);
-
+void get_currnet_pwr_mode(void);
+void ufs_query_test(void);
+void exe_task_on_cmd_going1(void);
+void exe_task_on_cmd_going2(void);
 
 int abort_task(byte_t lun, byte_t ttg, byte_t iid);
 int do_task(byte_t task_func, byte_t lun, byte_t ttg, byte_t iid);

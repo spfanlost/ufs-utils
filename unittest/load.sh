@@ -33,7 +33,7 @@ echo "#ifndef __AUTO_HEADER_H__">>${AUTO_HEADER}
 echo "#define __AUTO_HEADER_H__">>${AUTO_HEADER}
 echo "">>${AUTO_HEADER}
 
-echo "#define UFS_RW_BUFFER_SIZE (100*2024*1024)">>${AUTO_HEADER}
+echo "#define UFS_RW_BUFFER_SIZE (4*2024*1024)">>${AUTO_HEADER}
 echo "#define UFS_WLUN_DEVICE \"0:0:0:49488\"">>${AUTO_HEADER}
 echo "#define UFS_WLUN_BOOT \"0:0:0:49456\"">>${AUTO_HEADER}
 echo "#define UFS_WLUN_RPMB \"0:0:0:49476\"">>${AUTO_HEADER}

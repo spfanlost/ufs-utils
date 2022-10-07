@@ -24,6 +24,7 @@ vim /etc/ssh/sshd_config
 6.ufs-utils
 git clone --depth=1 https://github.com/westerndigitalcorporation/ufs-utils.git
 git clone --depth=1 https://github.com/spfanlost/ufs-utils.git
+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
 
 7.ufs-tool
 git clone --depth=1 https://github.com/AviShchislowski-zz/ufs-tool.git

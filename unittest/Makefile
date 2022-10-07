@@ -29,8 +29,8 @@ OBJECTS = \
 	test_send_cmd.o \
 	test_send_scsi.o \
 	test_send_uic.o \
-	test_0_full_disk_wr.o \
-	test_5_fua_wr_rd_cmp.o
+	test_tdm.o \
+	test_0_full_disk_wr.o
 
 INCLUDE :=
 

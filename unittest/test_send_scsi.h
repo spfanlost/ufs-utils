@@ -147,6 +147,17 @@ int scsi_write_buffer(int fd, __u8 *buf, __u8 mode, __u8 buf_id, __u32 buf_offse
 					  __u32 byte_count, __u8 sg_type);
 int scsi_write(int fd, __u8 *write_rsp, __u8 opcode, __u8 dpo, __u8 fua, __u8 grp_num,
 			   __u64 lba, __u32 transfer_len, __u8 wr_protect, __u32 byte_count, __u8 sg_type);
+int scsi_read(int fd, __u8 *read_rsp, __u8 opcode, __u8 dpo, __u8 fua, __u8 grp_num,
+			  __u64 lba, __u32 transfer_len, __u8 rd_protect, __u32 byte_count, __u8 sg_type);
+int read_capacity(int fd, __u8 *read_capacity_rsp, __u8 opcode,
+				  __u32 lba, __u32 alloc_len, __u32 byte_count, __u8 sg_type);
+
 void inquiry_test(__u8 fd, __u8 lun, __u8 err_event);
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+qword_t send_read_capacity(int fd, byte_t sg_type);
+int send_test_unit_ready(int fd, byte_t sg_type);
+int send_scsi_write(byte_t fd, byte_t sg_type, qword_t lba, dword_t len, void *wr_buf);
+int send_scsi_read(byte_t fd, byte_t sg_type, qword_t lba, dword_t len, void *rd_buf);
 
 #endif

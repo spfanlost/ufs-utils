@@ -25,12 +25,11 @@
 
 #include "common.h"
 #include "test.h"
+#include "unittest.h"
 #include "../ioctl.h"
 #include "../ufs.h"
-//#include "../scsi_bsg_util.h"
 #include "../ufs_rpmb.h"
 #include "../options.h"
-// #include "auto_header.h"
 #include "test_send_scsi.h"
 
 extern byte_t current_pwr_mode;
@@ -167,6 +166,7 @@ int send_scsi_cmd_maxio(int fd, const __u8 *cdb, void *buf, __u8 cmd_len,
 	while (((ret = ioctl(fd, SG_IO, sg_struct)) < 0) &&
 		   ((errno == EINTR) || (errno == EAGAIN)))
 		;
+	// mem_disp(sg_struct, sizeof(struct sg_io_v4));
 	g_sense_data.sense_key = 0;
 	g_sense_data.asc = 0;
 	g_sense_data.ascq = 0;
@@ -4385,10 +4385,15 @@ int scsi_read(int fd, __u8 *read_rsp, __u8 opcode, __u8 dpo, __u8 fua, __u8 grp_
 	}
 	for (int i = 0; i < read_cmd_len; i++)
 	{
-		LOG_INFO("read%d[%d]: %x\n", read_cmd_len, i, ((__u8 *)cmd_addr)[i]);
+		if (i == 0)
+			LOG_INFO("read%d:", read_cmd_len);
+		LOG_INFO("[%d]:%x", i, ((__u8 *)cmd_addr)[i]);
+		if (i == (read_cmd_len - 1))
+			LOG_INFO("\n");
 	}
-	LOG_INFO("Start : %s opcode %x dpo %d fua %d, lba %llx transfer_len %x grp_num %x, byte_count %x\n",
-			 __func__, opcode, dpo, fua, lba, transfer_len, grp_num, byte_count);
+
+	// LOG_INFO("Start : %s opcode %x dpo %d fua %d, lba %llx transfer_len %x grp_num %x, byte_count %x\n",
+	// 		 __func__, opcode, dpo, fua, lba, transfer_len, grp_num, byte_count);
 	ret = send_scsi_cmd_maxio(fd, cmd_addr, read_rsp, read_cmd_len, byte_count,
 							  SG_DXFER_FROM_DEV, sg_type);
 
@@ -4979,10 +4984,6 @@ int scsi_write(int fd, __u8 *write_rsp, __u8 opcode, __u8 dpo, __u8 fua, __u8 gr
 		write6[4] = transfer_len;
 		write_cmd_len = WRITE6_LEN;
 		cmd_addr = write6;
-		// for(int i = 0; i< write6_LEN; i++)
-		// {
-		// 	LOG_INFO("write6[%d]: %x\n", i, write6[i]);
-		// }
 	}
 	else if (WRITE10_CMD == opcode)
 	{
@@ -4992,10 +4993,6 @@ int scsi_write(int fd, __u8 *write_rsp, __u8 opcode, __u8 dpo, __u8 fua, __u8 gr
 		write10[6] = (grp_num & 0x1f);
 		write_cmd_len = WRITE10_LEN;
 		cmd_addr = write10;
-		// for(int i = 0; i< write10_LEN; i++)
-		// {
-		// 	LOG_INFO("write10[%d]: %x\n", i, write10[i]);
-		// }
 	}
 	else if (WRITE16_CMD == opcode)
 	{
@@ -5005,10 +5002,6 @@ int scsi_write(int fd, __u8 *write_rsp, __u8 opcode, __u8 dpo, __u8 fua, __u8 gr
 		write16[14] = (grp_num & 0x1f);
 		write_cmd_len = WRITE16_LEN;
 		cmd_addr = write16;
-		// for(int i = 0; i< write16_LEN; i++)
-		// {
-		// 	LOG_INFO("write16[%d]: %x\n", i, write16[i]);
-		// }
 	}
 	else
 	{
@@ -5023,10 +5016,15 @@ int scsi_write(int fd, __u8 *write_rsp, __u8 opcode, __u8 dpo, __u8 fua, __u8 gr
 	}
 	for (int i = 0; i < write_cmd_len; i++)
 	{
-		LOG_INFO("write%d[%d]: %x\n", write_cmd_len, i, ((__u8 *)cmd_addr)[i]);
+		if (i == 0)
+			LOG_INFO("write%d:", write_cmd_len);
+		LOG_INFO("[%d]:%x", i, ((__u8 *)cmd_addr)[i]);
+		if (i == (write_cmd_len - 1))
+			LOG_INFO("\n");
 	}
-	LOG_INFO("Start : %s opcode %x dpo %d fua %d, lba %llx transfer_len %x wr_protect %x grp_num %x, byte_count %x\n",
-			 __func__, opcode, dpo, fua, lba, transfer_len, wr_protect, grp_num, byte_count);
+
+	// LOG_INFO("Start : %s opcode %x dpo %d fua %d, lba %llx transfer_len %x wr_protect %x grp_num %x, byte_count %x\n",
+	// 		 __func__, opcode, dpo, fua, lba, transfer_len, wr_protect, grp_num, byte_count);
 	ret = send_scsi_cmd_maxio(fd, cmd_addr, write_rsp, write_cmd_len, byte_count,
 							  SG_DXFER_TO_DEV, sg_type);
 
@@ -5274,7 +5272,7 @@ void scsi_write_test(__u8 fd, __u8 lun, __u8 err_event)
 			;
 		}
 
-		/*  		for (size_t i = 0; i < RW_BUFFER_SIZE; i++)
+		/*  		for (size_t i = 0; i < UFS_RW_BUFFER_SIZE; i++)
 				{
 					MEM8_GET(wr_buf+i) = BYTE_RAND();
 					// LOG_INFO("%X",MEM8_GET(wr_buf));
@@ -5440,7 +5438,7 @@ __u8 lun_rand(struct tool_options *opt, __u8 max_lun)
 	{
 		// lun_num = 9;
 	}
-	lun_num = 8;
+	// lun_num = 8;
 	switch (lun_num)
 	{
 	case 0:
@@ -5723,7 +5721,7 @@ void test_send_scsi(struct tool_options *opt)
 			break;
 		case 13:
 			memset(opt, 0, sizeof(struct tool_options));
-			strcpy(opt->path, "/dev/bsg/0:0:0:6");
+			strcpy(opt->path, "/dev/bsg/0:0:0:0");
 			// strcpy(opt->path,"/dev/sg1");
 			fd = open(opt->path, oflag);
 			LOG_INFO("Start : %s fd %d\n", __func__, fd);
@@ -5736,7 +5734,8 @@ void test_send_scsi(struct tool_options *opt)
 			break;
 		case 14:
 			memset(opt, 0, sizeof(struct tool_options));
-			strcpy(opt->path, "/dev/sg0");
+			strcpy(opt->path, "/dev/bsg/0:0:0:0");
+			// strcpy(opt->path, "/dev/sg0");
 			fd = open(opt->path, oflag);
 			LOG_INFO("Start : %s fd %d\n", __func__, fd);
 
@@ -5744,7 +5743,7 @@ void test_send_scsi(struct tool_options *opt)
 			{
 				print_error("open");
 			}
-			scsi_write_test(fd, 0xb0, 1);
+			scsi_write_test(fd, 0x0, 1);
 			break;
 		case 15:
 			memset(opt, 0, sizeof(struct tool_options));
@@ -5855,7 +5854,7 @@ void test_send_scsi(struct tool_options *opt)
 			// hpb_read_buffer(fd, rd_buf, 1, 20, 20, 8000, 8000, SG4_TYPE);
 			break;
 		case 101:
-			// while(1)
+			while (1)
 			{
 				lun = lun_rand(opt, 11);
 				fd = open(opt->path, oflag);
@@ -5871,7 +5870,7 @@ void test_send_scsi(struct tool_options *opt)
 			}
 			break;
 		case 21:
-			// while(1)
+			while (1)
 			{
 				lun = lun_rand(opt, 8);
 				fd = open(opt->path, oflag);
@@ -5927,4 +5926,124 @@ void test_send_scsi(struct tool_options *opt)
 		}
 #endif
 	}
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+qword_t send_read_capacity(int fd, byte_t sg_type)
+{
+	int ret = 0;
+	byte_t opcode = 0;
+	byte_t cmd_len = 0;
+	unsigned char read_capacity_cmd10[READ_CAPACITY10_CMDLEN] = {0};
+	unsigned char read_capacity_cmd16[READ_CAPACITY16_CMDLEN] = {0};
+	unsigned char *cmd_addr;
+	dword_t alloc_len = 0;
+	dword_t byte_count = 0;
+	qword_t lba = 0;
+	qword_t cap = 0;
+	opcode = 1;
+	if (0 == opcode)
+	{
+		opcode = READ_CAPACITY10_CMD;
+		byte_count = 0x8;
+	}
+	else if (1 == opcode)
+	{
+		opcode = READ_CAPACITY16_CMD;
+		alloc_len = 0x20; // ufs spec 194
+		byte_count = 0x20;
+	}
+
+	read_capacity_cmd10[0] = READ_CAPACITY10_CMD;
+	read_capacity_cmd16[0] = READ_CAPACITY16_CMD;
+	if (READ_CAPACITY10_CMD == opcode)
+	{
+		put_unaligned_be16((uint16_t)lba, (read_capacity_cmd10 + 2));
+		cmd_len = READ_CAPACITY10_CMDLEN;
+		cmd_addr = read_capacity_cmd10;
+	}
+	else if (READ_CAPACITY16_CMD == opcode)
+	{
+		put_unaligned_be32((uint32_t)lba, (read_capacity_cmd16 + 2));
+		put_unaligned_be32((uint32_t)alloc_len, (read_capacity_cmd16 + 10));
+		cmd_len = READ_CAPACITY16_CMDLEN;
+		cmd_addr = read_capacity_cmd16;
+	}
+	else
+	{
+		perror("scsi read_capacity cmd: wrong parameters opcode\n");
+		return -EINVAL;
+	}
+	ret = send_scsi_cmd_maxio(fd, cmd_addr, rd_buf, cmd_len,
+							  byte_count, SG_DXFER_FROM_DEV, sg_type);
+	if (ret < 0)
+	{
+		LOG_ERROR("stop : %s ret %d\n", __func__, ret);
+		cap = 0;
+	}
+	else
+	{
+		byte_t *buf = (byte_t *)rd_buf;
+		if (READ_CAPACITY10_CMD == opcode)
+		{
+			cap = BYTE2DWORD(buf[0], buf[1], buf[2], buf[3]);
+		}
+		else if (READ_CAPACITY16_CMD == opcode)
+		{
+			cap = BYTE2QWORD(buf[0], buf[1], buf[2], buf[3], buf[4], buf[5], buf[6], buf[7]);
+		}
+	}
+	return cap;
+}
+
+int send_test_unit_ready(int fd, byte_t sg_type)
+{
+	int ret;
+	unsigned char test_unit_ready_cmd[] = {
+		TEST_UNIT_READY_CMD, 0, 0, 0, 0, 0};
+	byte_t cmd_len = ARRAY_SIZE(test_unit_ready_cmd);
+	// for (int i = 0; i < cmd_len; i++)
+	// {
+	// 	if (i == 0)
+	// 		LOG_INFO("tur:");
+	// 	LOG_INFO("[%d]:%x", i, test_unit_ready_cmd[i]);
+	// 	if (i == (cmd_len - 1))
+	// 		LOG_INFO("\n");
+	// }
+	ret = send_scsi_cmd_maxio(fd, test_unit_ready_cmd, NULL,
+							  cmd_len, 0, SG_DXFER_NONE, sg_type);
+	return ret;
+}
+
+int send_scsi_write(byte_t fd, byte_t sg_type, qword_t lba, dword_t len, void *wr_buf)
+{
+	byte_t opcode = 0, dpo = 0, grp_num = 0, fua = 0;
+	dword_t byte_count = len * 4096;
+	int ret = 0;
+	opcode = (rand() % 0x3);
+	opcode = opcode == 0 ? WRITE6_CMD : opcode == 1 ? WRITE10_CMD
+													: WRITE16_CMD;
+	dpo = (rand() % 0x2);
+	fua = (rand() % 0x2);
+
+	ret = scsi_write(fd, wr_buf, opcode, dpo, fua, grp_num,
+					 lba, len, 0, byte_count, sg_type);
+	return ret;
+}
+
+int send_scsi_read(byte_t fd, byte_t sg_type, qword_t lba, dword_t len, void *rd_buf)
+{
+	byte_t opcode = 0, dpo = 0, grp_num = 0, fua = 0, rd_protect = 0;
+	dword_t byte_count = len * 4096;
+	int ret = 0;
+	opcode = (rand() % 0x3);
+	opcode = opcode == 0 ? READ6_CMD : opcode == 1 ? READ10_CMD
+												   : READ16_CMD;
+	dpo = (rand() % 0x2);
+	fua = (rand() % 0x2);
+
+	ret = scsi_read(fd, rd_buf, opcode, dpo, fua, grp_num,
+					lba, len, rd_protect, byte_count, sg_type);
+	return ret;
 }

@@ -26,6 +26,12 @@ git clone --depth=1 https://github.com/westerndigitalcorporation/ufs-utils.git
 git clone --depth=1 https://github.com/spfanlost/ufs-utils.git
 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
 
+git status 查看工作区代码相对于暂存区的差别
+git add . 将当前目录下修改的所有代码从工作区添加到暂存区 . 代表当前目录
+git commit -m ‘注释’ 将缓存区内容添加到本地仓库
+git pull origin master先将远程仓库master中的信息同步到本地仓库master中
+git push origin master 将本地版本库推送到远程服务器，
+
 7.ufs-tool
 git clone --depth=1 https://github.com/AviShchislowski-zz/ufs-tool.git
 
